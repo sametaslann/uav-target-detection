@@ -48,17 +48,14 @@ def pixhawkDatas(lat,lon,count,f):
 
     #If pixhawk entire the required location, activate the servo motors respectively
     while True:
-        if vehicle.location.global_frame.lat < lat+0.00005 and vehicle.location.global_frame.lat > lat-0.00005 and vehicle.location.global_frame.lon < lon+0.00005 and vehicle.location.global_frame.lon > lon-0.00005 :
-            print ("Global Location(SERVO): %s" % vehicle.location.global_frame)
+        if vehicle.location.global_frame.lat < lat+0.00005 and vehicle.location.global_frame.lat > lat-0.00005 and vehicle.location.global_frame.lon < lon+0.00005 and vehicle.location.global_frame.lon > lon-0.00005:
             f.write("Global Location: %s\n" % vehicle.location.global_frame)        
             if(count==1):
-                print("Servo 1 is open")
                 count += 1
                 f.write("Servo 1 is open\n")
                 servoControl()
                 time.sleep(7)
             else:
-                print('Servo 2 is open\n')
                 f.write("Servo 2 is open\n")
                 servo2Control()
                 f.close()
@@ -66,15 +63,14 @@ def pixhawkDatas(lat,lon,count,f):
 
 
 
-print("Ready 1")
+
 vehicle = connect('/dev/serial0', wait_ready=True,baud=921600) #connect vehicle
-print("Ready 2")
+
 while True:
     if(vehicle.mode == VehicleMode("AUTO")):#when vehicle is auto, open the camera
         cap = cv.VideoCapture(0)
         break
 f = open("logfile.txt", "w") # open a file to write logs
-print("Ready 3..")
 f.write("Script run...\n")
 lat = 0
 lon = 0
@@ -103,13 +99,10 @@ while True:
     circles = cv.HoughCircles(gray_blurred, cv.HOUGH_GRADIENT, 1,200,param1=50,
                               param2=20,minRadius=0,maxRadius=100)
    
-    print(circles)
     #Where camera sees the red circle, saves the location of vehicle
     if circles is not None and count==0:
         circles = np.round(circles[0, :]).astype("int")
         count +=1
-        print("Red Area has been detected..")
-        print ("Global Location: %s" % vehicle.location.global_frame)
         cv.imwrite('Red Circle.png',frame)
         f = open("logfile.txt", "w")
         f.write("Global Location: %s\n" % vehicle.location.global_frame)
